@@ -16,9 +16,13 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $this->call([
+            //các seeder kh có khóa ngoại
             CategorySeeder::class,
             BrandSeeder::class,
             UserSeeder::class,
+            //các seeder có khóa ngoại
+            ProductSeeder::class,
+            PostSeeder::class,
         ]);
     }
 }
