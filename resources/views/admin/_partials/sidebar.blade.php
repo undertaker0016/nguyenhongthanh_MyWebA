@@ -23,8 +23,29 @@ Admin
     <div class="collapse" id="categoryMenu">
     <ul class="nav flex-column ms-3">
         <li class="nav-item">
-<a class="nav-link text-white" href="#"> Danh sách loại sản phẩm</a>
+            <a class="nav-link text-white" 
+            href="{{ route('admin.categories.index') }}"> Loại sản phẩm</a>
         </li>
+        <li class="nav-item">
+    <a class="nav-link text-white"
+       href="{{ route('admin.brands.index') }}">
+        Thương hiệu
+    </a>
+    <li class="nav-item">
+    <a class="nav-link text-white"
+       href="{{ route('admin.users.index') }}">
+        <i class="bi bi-people"></i>
+        Người dùng
+    </a>
+    <li class="nav-item">
+    <a class="nav-link text-white"
+       href="{{ route('admin.products.index') }}">
+        <i class="bi bi-box-seam"></i>
+        Sản phẩm
+    </a>
+</li>
+</li>
+</li>
     <li class="nav-item">
     <a class="nav-link text-white" href="#"> Thêm loại sản phẩm</a>
     </li>

@@ -38,3 +38,10 @@ return view('admin.dashboard');
 })-> name('admin.home');
 Route::get('/test1', [ProductController::class, 'test1']);
 Route::get('/test2', [ProductController::class, 'test2']);
+Route::prefix('admin')->name('admin.')->group(function(){
+    Route::resource('categories', CategoryController::class);
+    Route::resource('posts', PostController::class);
+    Route::resource('brands', BrandController::class);
+    Route::resource('users', UserController::class);
+    Route::resource('products', ProductController::class);
+});
