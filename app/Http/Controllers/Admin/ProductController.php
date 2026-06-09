@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Product;
+
 class ProductController extends Controller
 {
     public function test1()  {
@@ -16,24 +18,37 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($limit = 10)
     {
-      $list = DB::table('products as p')
-    ->join('categories as c', 'p.cateid', '=', 'c.cateid')
-    ->leftJoin('brands as b', 'p.brandid', '=', 'b.id')
-    ->select(
-        'p.id',
-        'p.productname',
-        'p.price',
-        'p.pricediscount',
-        'p.image',
-        'p.status',
-        'c.catename',
-        'b.brandname'
-    )
-    ->orderBy('p.productname')
-    ->get();
+    //   $list = DB::table('products as p')
+    // ->join('categories as c', 'p.cateid', '=', 'c.cateid')
+    // ->leftJoin('brands as b', 'p.brandid', '=', 'b.id')
+    // ->select(
+    //     'p.id',
+    //     'p.productname',
+    //     'p.price',
+    //     'p.pricediscount',
+    //     'p.image',
+    //     'p.status',
+    //     'c.catename',
+    //     'b.brandname'
+    // )
+    // ->orderBy('p.productname')
+    // ->get();
 
+    $list = Product::with([
+        'category', 'brand'])
+    ->select(
+        'id',
+        'productname',
+        'price',
+        'pricediscount',
+        'image',
+        'status',
+        'cateid',
+        'brandid')
+    ->orderBy('productname')
+    ->paginate($limit);
 return view('admin.products.index', compact('list'));
     }
 

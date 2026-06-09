@@ -43,19 +43,18 @@ Admin
         <i class="bi bi-box-seam"></i>
         Sản phẩm
     </a>
+    <li class="nav-item">
+    <a class="nav-link text-white"
+       href="{{ route('admin.posts.index') }}">
+        <i class="bi bi-file-earmark-text"></i>
+        Bài viết
 </li>
 </li>
 </li>
     <li class="nav-item">
-    <a class="nav-link text-white" href="#"> Thêm loại sản phẩm</a>
+    <a class="nav-link text-white" href="{{ route('admin.categories.create') }}"> Thêm loại sản phẩm</a>
     </li>
     </ul>
 </div>
-    </li>
-    <li class="nav-item">
-    <a class="nav-link text-white" href="#">
-    <i class="bi bi-box-seam"></i>Sản phẩm
-    </a>
-    </li>
-    </ul>
+
 </div>

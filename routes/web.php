@@ -18,12 +18,6 @@ Route::get('/test', function () {
     return "Test";
 
 });
-//CRUD
-Route::resource('admin/category', CategoryController::class);
-Route::resource('admin/post', PostController::class);
-Route::resource('admin/brand', BrandController::class);
-Route::resource('admin/user', UserController::class);
-Route::resource('admin/product', ProductController::class);
 
 //demo
 Route::get('/demo', [DemoController::class, 'index']);
@@ -38,6 +32,7 @@ return view('admin.dashboard');
 })-> name('admin.home');
 Route::get('/test1', [ProductController::class, 'test1']);
 Route::get('/test2', [ProductController::class, 'test2']);
+//CRUD
 Route::prefix('admin')->name('admin.')->group(function(){
     Route::resource('categories', CategoryController::class);
     Route::resource('posts', PostController::class);

@@ -1,18 +1,21 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
+use App\Models\Post;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 class PostController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($limit = 10)
     {
-        return "post index";
+        $list = Post::select('id', 'title', 'slug', 'image', 'status')
+        ->orderBy('title')
+        ->paginate($limit);
+    return view('admin.posts.index', compact('list'));
     }
 
     /**

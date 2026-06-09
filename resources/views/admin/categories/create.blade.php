@@ -9,12 +9,20 @@
 
         <div class="mb-3">
             <label>Tên loại sản phẩm</label>
-            <input type="text" name="catename" class="form-control">
+            <input type="text" name="catename" class="form-control" required>
         </div>
 
         <div class="mb-3">
             <label>Slug</label>
             <input type="text" name="slug" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label>Trạng thái</label>
+            <select name="status" class="form-control">
+                <option value="1">Hiển thị</option>
+                <option value="0">Ẩn</option>
+            </select>
         </div>
 
         <button type="submit" class="btn btn-primary">

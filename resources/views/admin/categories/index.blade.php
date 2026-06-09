@@ -1,3 +1,4 @@
+
 @extends('admin.layouts.admin')
 
 @section('title', 'Loại Sản Phẩm')
@@ -29,7 +30,7 @@
 
                 <td>
                     <img
-                        src="{{ asset('images/category/' . ($item->image ?? 'default.png')) }}"
+                        src="{{ asset('images/category/' . (!empty($item->image) ? $item->image : 'default.png')) }}"
                         alt="{{ $item->catename }}"
                         width="80"
                         height="80"
@@ -39,7 +40,7 @@
                 <td>{{ $item->cateid }}</td>
                 <td>{{ $item->catename }}</td>
                 <td>{{ $item->slug }}</td>
-
+                    
                 <td>
                     @if($item->status == 1)
                         <span class="badge bg-success">Hiển thị</span>
@@ -48,6 +49,9 @@
                     @endif
                 </td>
                 <td>
+                    <a href="{{ route('admin.categories.edit', $item->cateid) }}" class="btn btn-warning btn-sm">
+                        Sửa
+                    </a> 
                     <form action="{{ route('admin.categories.destroy', $item->cateid) }}"
                         method="POST"
                         onsubmit="return confirm('Bạn có chắc muốn xóa không?')">
@@ -64,4 +68,7 @@
     </tbody>
 </table>
 
+<div class="d-flex justify-content-center">
+    {{ $list->links() }}
+</div>
 @endsection
