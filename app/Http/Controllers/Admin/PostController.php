@@ -1,23 +1,26 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-use App\Models\Post;
+
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Post;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+
 class PostController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index($limit = 10)
+    public function index()
     {
-        $list = Post::select('id', 'title', 'slug', 'image', 'status')
-        ->orderBy('title')
-        ->paginate($limit);
-    return view('admin.posts.index', compact('list'));
+        $list = Post::with('user')
+            ->orderByDesc('id')
+            ->paginate(10);
+
+        return view('admin.posts.index', compact('list'));
     }
 
     /**
@@ -25,10 +28,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        $users = User::select('id', 'fullname')
-            ->orderBy('fullname')
-            ->get();
-        return view('admin.posts.create', compact('users'));
+        return view('admin.posts.create');
     }
 
     /**
@@ -37,39 +37,30 @@ class PostController extends Controller
     public function store(Request $request)
     {
         try {
-        $request->validate([
-            'title' => 'required',
-            'slug' => 'required|unique:posts,slug',
-            'content' => 'required',
-            'image' => 'nullable|image',
-            'status' => 'required',
-            'user_id' => 'required|exists:users,id',
-        ]);
+            $request->validate([
+                'title' => 'required|min:3|max:255',
+                'content' => 'required',
+                'image' => 'nullable|string',
+                'status' => 'required|in:0,1',
+            ]);
 
-        $imagePath = null;
+            Post::create([
+                'title' => $request->title,
+                'slug' => Str::slug($request->title),
+                'content' => $request->content,
+                'image' => $request->image,
+                'status' => $request->status,
+                'user_id' => Auth::id(),
+            ]);
 
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('posts', 'public');
+            return redirect()
+                ->route('admin.posts.index')
+                ->with('success', 'Thêm bài viết thành công!');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Thêm bài viết thất bại!');
         }
-
-        Post::create([
-            'title' => $request->title,
-            'slug' => $request->slug,
-            'content' => $request->content,
-            'image' => $imagePath,
-            'status' => $request->status,
-            'user_id' => $request->user_id,
-        ]);
-
-        return redirect()
-            ->route('admin.posts.index')
-            ->with('success', 'Thêm bài viết thành công!');
-
-    } catch (\Exception $e) {
-        return back()
-            ->with('error', 'Thêm bài viết thất bại!')
-            ->withInput();
-    }
     }
 
     /**
@@ -77,20 +68,23 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        return "post show: ";
+        return "post show: " ;
     }
 
     /**
      * Show the form for editing the specified resource.
      */
+
     public function edit(string $id)
-    {
-        $post = Post::findOrFail($id);
-        $users = User::select('id', 'fullname')
-            ->orderBy('fullname')
-            ->get();
-        return view('admin.posts.edit', compact('post', 'users'));
-    }
+{
+    $post = Post::findOrFail($id);
+
+    $users = User::select('id', 'fullname')
+        ->orderBy('fullname')
+        ->get();
+
+    return view('admin.posts.edit', compact('post', 'users'));
+}
 
     /**
      * Update the specified resource in storage.
@@ -98,43 +92,30 @@ class PostController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $request->validate([
-                'title' => 'required',
-                'slug' => 'required|unique:posts,slug,' . $id,
-                'content' => 'required',
-                'image' => 'nullable|image',
-                'status' => 'required',
-                'user_id' => 'required|exists:users,id',
-            ]);
-
             $post = Post::findOrFail($id);
 
-            if ($request->hasFile('image')) {
-                if ($post->image) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($post->image);
-                }
-                $imagePath = $request->file('image')->store('posts', 'public');
-            } else {
-                $imagePath = $post->image;
-            }
+            $request->validate([
+                'title' => 'required|min:3|max:255',
+                'content' => 'required',
+                'image' => 'nullable|string',
+                'status' => 'required|in:0,1',
+            ]);
 
             $post->update([
                 'title' => $request->title,
-                'slug' => $request->slug,
+                'slug' => Str::slug($request->title),
                 'content' => $request->content,
-                'image' => $imagePath,
+                'image' => $request->image,
                 'status' => $request->status,
-                'user_id' => $request->user_id,
             ]);
 
             return redirect()
                 ->route('admin.posts.index')
                 ->with('success', 'Cập nhật bài viết thành công!');
-
         } catch (\Exception $e) {
             return back()
-                ->with('error', 'Cập nhật bài viết thất bại!')
-                ->withInput();
+                ->withInput()
+                ->with('error', 'Cập nhật thất bại!');
         }
     }
 
@@ -143,6 +124,6 @@ class PostController extends Controller
      */
     public function destroy(string $id)
     {
-        return "xoa post: " ;
+        return "post destroy: ";
     }
 }

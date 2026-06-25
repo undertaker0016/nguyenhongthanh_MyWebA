@@ -60,10 +60,8 @@ return view('admin.products.index', compact('list'));
     public function create()
     {
         $categories = Category::select('cateid', 'catename')
-            ->orderBy('catename')
             ->get();
         $brands = Brand::select('id', 'brandname')
-            ->orderBy('brandname')
             ->get();
         return view('admin.products.create', compact('categories', 'brands'));
     }

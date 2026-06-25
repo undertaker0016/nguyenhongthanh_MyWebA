@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 use App\Models\Brand;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\BrandRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;  
 
@@ -36,40 +37,27 @@ class BrandController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(BrandRequest $request)
     {
          try {
-        $request->validate([
-            'brandname' => 'required',
-            'slug' => 'required',
-            'image' => 'nullable|image',
-            'status' => 'required',
-        ]);
-
-        $imagePath = null;
-
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('brands', 'public');
-        }
-
         Brand::create([
             'brandname' => $request->brandname,
             'slug' => $request->slug,
-            'image' => $imagePath,
+            'image' => $request->image,
             'status' => $request->status,
-            'sort_order' => $request->sort_order,
             'description' => $request->description,
         ]);
-
         return redirect()
-            ->route('admin.brands.index')
-            ->with('success', 'Thêm thương hiệu thành công!');
-
-    } catch (\Exception $e) {
-        return back()
-            ->with('error', 'Thêm thất bại!')
-            ->withInput();
-    }
+        ->route('admin.brands.index')
+        ->with('success', 'Thêm thương hiệu thành công');
+         }
+         catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Thêm thương hiệu thất bại!');
+                
+        }
     }
 
     /**
@@ -85,15 +73,34 @@ class BrandController extends Controller
      */
     public function edit(string $id)
     {
-        return "trang sua brand: " ;
+        return view('admin.brands.edit', [
+            'brand' => Brand::findOrFail($id),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(BrandRequest $request, string $id)
     {
-        return "trang cap nhat brand: " ;
+        try {
+            $brand = Brand::findOrFail($id);
+            $brand->update([
+                'brandname' => $request->brandname,
+                'slug' => $request->slug,
+                'image' => $request->image,
+                'status' => $request->status,
+                'description' => $request->description,
+            ]);
+            return redirect()
+                ->route('admin.brands.index')
+                ->with('success', 'Cập nhật thương hiệu thành công!');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Cập nhật thương hiệu thất bại!');
+        }
     }
 
     /**

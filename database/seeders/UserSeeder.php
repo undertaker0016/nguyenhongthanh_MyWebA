@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             'username' => fake()->unique()->userName(),
             'email' => fake()->unique()->safeEmail(),
             'password' => '123456', 
-            'phone' => fake()->unique()->phoneNumber(),
+            'phone' => fake()->numerify('09########'),
             'address' => fake()->address(),
             'gender' => fake()->numberBetween(0, 2),
             'birthday' => fake()->date(),

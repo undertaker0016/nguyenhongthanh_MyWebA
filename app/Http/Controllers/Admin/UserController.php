@@ -6,165 +6,121 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-       $list = DB::table('users')
-        ->select(
-            'id',
-            'fullname',
-            'username',
-            'email',
-            'phone',
-            'role',
-            'status'
-        )
-        ->orderBy('fullname')
-        ->get();
+        $list = User::orderBy('fullname')->get();
 
-     return view('admin.users.index', compact('list'));
+        return view('admin.users.index', compact('list'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $roles = ['user' => 'Người dùng', 'admin' => 'Quản trị viên'];
+        $roles = [
+            1 => 'Người dùng',
+            2 => 'Quản trị viên',
+        ];
+
         return view('admin.users.create', compact('roles'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'fullname' => 'required',
-                'username' => 'required|unique:users,username',
-                'email' => 'required|email|unique:users,email',
-                'password' => 'required|min:6',
-                'phone' => 'nullable',
-                'address' => 'nullable',
-                'gender' => 'nullable',
-                'birthday' => 'nullable|date',
-                'role' => 'required',
-                'status' => 'required',
-            ]);
+        $request->validate([
+            'fullname' => 'required|min:3|max:100',
+            'username' => 'required|min:3|max:50|unique:users,username',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
+            'phone' => 'nullable|regex:/^0[0-9]{9}$/',
+            'address' => 'nullable|max:255',
+            'gender' => 'nullable|in:1,2',
+            'birthday' => 'nullable|date|before:today',
+            'role' => 'required|in:1,2',
+            'status' => 'required|in:0,1',
+        ]);
 
-            User::create([
-                'fullname' => $request->fullname,
-                'username' => $request->username,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'phone' => $request->phone,
-                'address' => $request->address,
-                'gender' => $request->gender,
-                'birthday' => $request->birthday,
-                'role' => $request->role,
-                'status' => $request->status,
-            ]);
+        User::create([
+            'fullname' => $request->fullname,
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'gender' => $request->gender,
+            'birthday' => $request->birthday,
+            'role' => $request->role,
+            'status' => $request->status,
+        ]);
 
-            return redirect()
-                ->route('admin.users.index')
-                ->with('success', 'Tạo người dùng thành công!');
-
-        } catch (\Exception $e) {
-            return back()
-                ->with('error', 'Tạo người dùng thất bại!')
-                ->withInput();
-        }
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Thêm user thành công!');
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(Request $request, string $id)
     {
-        return "user show: ";
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'fullname' => 'required|min:3|max:100',
+            'username' => [
+                'required',
+                'min:3',
+                'max:50',
+                Rule::unique('users', 'username')->ignore($id),
+            ],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($id),
+            ],
+            'password' => 'nullable|min:6',
+            'phone' => 'nullable|regex:/^0[0-9]{9}$/',
+            'address' => 'nullable|max:255',
+            'gender' => 'nullable|in:1,2',
+            'birthday' => 'nullable|date|before:today',
+            'role' => 'required|in:1,2',
+            'status' => 'required|in:0,1',
+        ]);
+
+        $data = [
+            'fullname' => $request->fullname,
+            'username' => $request->username,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'gender' => $request->gender,
+            'birthday' => $request->birthday,
+            'role' => $request->role,
+            'status' => $request->status,
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
+
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Cập nhật user thành công!');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit(string $id)
     {
         $user = User::findOrFail($id);
-        $roles = ['user' => 'Người dùng', 'admin' => 'Quản trị viên'];
+
+        $roles = [
+            1 => 'Người dùng',
+            2 => 'Quản trị viên',
+        ];
+
         return view('admin.users.edit', compact('user', 'roles'));
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        try {
-            $request->validate([
-                'fullname' => 'required',
-                'username' => 'required|unique:users,username,' . $id,
-                'email' => 'required|email|unique:users,email,' . $id,
-                'password' => 'nullable|min:6',
-                'phone' => 'nullable',
-                'address' => 'nullable',
-                'gender' => 'nullable',
-                'birthday' => 'nullable|date',
-                'role' => 'required',
-                'status' => 'required',
-            ]);
-
-            $user = User::findOrFail($id);
-
-            $updateData = [
-                'fullname' => $request->fullname,
-                'username' => $request->username,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'address' => $request->address,
-                'gender' => $request->gender,
-                'birthday' => $request->birthday,
-                'role' => $request->role,
-                'status' => $request->status,
-            ];
-
-            if ($request->filled('password')) {
-                $updateData['password'] = Hash::make($request->password);
-            }
-
-            $user->update($updateData);
-
-            return redirect()
-                ->route('admin.users.index')
-                ->with('success', 'Cập nhật người dùng thành công!');
-
-        } catch (\Exception $e) {
-            return back()
-                ->with('error', 'Cập nhật người dùng thất bại!')
-                ->withInput();
-        }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        try {
-            User::findOrFail($id)->delete();
-
-            return redirect()
-                ->route('admin.users.index')
-                ->with('success', 'Xóa người dùng thành công!');
-
-        } catch (\Exception $e) {
-            return back()->with('error', 'Xóa người dùng thất bại!');
-        }
+        return "user destroy: ";
     }
 }
