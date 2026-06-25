@@ -1,15 +1,33 @@
-
 @extends('admin.layouts.admin')
-
-@section('title', 'Loại Sản Phẩm')
 
 @section('content')
 
-<h2 class="mb-3">DANH SÁCH LOẠI SẢN PHẨM</h2>
-<a href="{{ route('admin.categories.create') }}" class="btn btn-success mb-3">
-    + Thêm mới
-</a>
-<table class="table table-bordered table-hover table-striped">
+<div class="container mt-3">
+
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Thành công!</strong> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Lỗi!</strong> {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Danh sách loại sản phẩm</h3>
+
+    <a href="{{ route('admin.categories.create') }}"
+       class="btn btn-primary">
+        + Thêm loại sản phẩm
+    </a>
+</div>
+
+<table class="table table-bordered table-hover align-middle">
     <thead class="table-dark">
         <tr>
             <th>STT</th>
@@ -18,57 +36,80 @@
             <th>Tên loại</th>
             <th>Slug</th>
             <th>Trạng thái</th>
-             <th>Chức năng</th>
+            <th>Ngày tạo</th>
+            <th>Chức năng</th>
         </tr>
     </thead>
 
     <tbody>
-        
-        @foreach($list as $key => $item)
+        @forelse($list as $key => $item)
             <tr>
-                <td>{{ $key + 1 }}</td>
+                <td>{{ $list->firstItem() + $key }}</td>
 
                 <td>
                     <img
-                        src="{{ asset('images/category/' . (!empty($item->image) ? $item->image : 'default.png')) }}"
+                        src="{{ asset('images/category/' . ($item->image ?: 'default.png')) }}"
                         alt="{{ $item->catename }}"
                         width="80"
                         height="80"
-                        class="img-thumbnail">
+                        class="img-thumbnail rounded">
                 </td>
 
                 <td>{{ $item->cateid }}</td>
+
                 <td>{{ $item->catename }}</td>
+
                 <td>{{ $item->slug }}</td>
-                    
+
                 <td>
-                    @if($item->status == 1)
-                        <span class="badge bg-success">Hiển thị</span>
+                    @if($item->status)
+                        <span class="badge bg-success">
+                            Hiển thị
+                        </span>
                     @else
-                        <span class="badge bg-danger">Ẩn</span>
+                        <span class="badge bg-danger">
+                            Ẩn
+                        </span>
                     @endif
                 </td>
+
                 <td>
-                    <a href="{{ route('admin.categories.edit', $item->cateid) }}" class="btn btn-warning btn-sm">
+                    {{ $item->created_at?->format('d/m/Y H:i') }}
+                </td>
+
+                <td>
+                    <a href="{{ route('admin.categories.edit', $item->cateid) }}"
+                       class="btn btn-warning btn-sm">
                         Sửa
-                    </a> 
+                    </a>
+
                     <form action="{{ route('admin.categories.destroy', $item->cateid) }}"
-                        method="POST"
-                        onsubmit="return confirm('Bạn có chắc muốn xóa không?')">
+                          method="POST"
+                          style="display:inline-block"
+                          onsubmit="return confirm('Bạn có chắc muốn xóa?')">
                         @csrf
                         @method('DELETE')
 
-                        <button type="submit" class="btn btn-danger btn-sm">
+                        <button class="btn btn-danger btn-sm">
                             Xóa
                         </button>
                     </form>
                 </td>
             </tr>
-        @endforeach
+        @empty
+            <tr>
+                <td colspan="8" class="text-center text-muted">
+                    Không có loại sản phẩm nào
+                </td>
+            </tr>
+        @endforelse
     </tbody>
 </table>
 
 <div class="d-flex justify-content-center">
     {{ $list->links() }}
+</div>
+```
+
 </div>
 @endsection

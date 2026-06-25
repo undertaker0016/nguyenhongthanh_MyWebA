@@ -19,9 +19,9 @@ class BrandController extends Controller
     //     ->orderBy('brandname')
     //     ->get();
     $list = Brand::select('id', 'brandname', 'slug', 'image', 'status')
-    ->where('status', 1)
-    ->orderBy('brandname')
-    ->get();
+        ->orderBy('brandname')
+        ->paginate($limit);
+
     return view('admin.brands.index', compact('list'));
     }
 
@@ -30,7 +30,7 @@ class BrandController extends Controller
      */
     public function create()
     {
-        return "trang tao brand";
+        return view('admin.brands.create');
     }
 
     /**
@@ -38,7 +38,38 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
-        return "luu brand";
+         try {
+        $request->validate([
+            'brandname' => 'required',
+            'slug' => 'required',
+            'image' => 'nullable|image',
+            'status' => 'required',
+        ]);
+
+        $imagePath = null;
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('brands', 'public');
+        }
+
+        Brand::create([
+            'brandname' => $request->brandname,
+            'slug' => $request->slug,
+            'image' => $imagePath,
+            'status' => $request->status,
+            'sort_order' => $request->sort_order,
+            'description' => $request->description,
+        ]);
+
+        return redirect()
+            ->route('admin.brands.index')
+            ->with('success', 'Thêm thương hiệu thành công!');
+
+    } catch (\Exception $e) {
+        return back()
+            ->with('error', 'Thêm thất bại!')
+            ->withInput();
+    }
     }
 
     /**

@@ -2,6 +2,19 @@
 
 @section('content')
 <div class="container mt-3">
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Thành công!</strong> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Lỗi!</strong> {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3>Danh sách bài viết</h3>
@@ -35,7 +48,7 @@
 
                     <td>
                         @if($item->image)
-                            <img src="{{ asset('uploads/' . $item->image) }}"
+                            <img src="{{ asset('storage/' . $item->image) }}"
                                  width="80"
                                  class="rounded">
                         @endif

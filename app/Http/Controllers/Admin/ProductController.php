@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Product;
-
+use App\Models\Category;
+use App\Models\Brand;
 class ProductController extends Controller
 {
     public function test1()  {
@@ -20,6 +21,7 @@ class ProductController extends Controller
      */
     public function index($limit = 10)
     {
+        // ========query builder=========
     //   $list = DB::table('products as p')
     // ->join('categories as c', 'p.cateid', '=', 'c.cateid')
     // ->leftJoin('brands as b', 'p.brandid', '=', 'b.id')
@@ -35,7 +37,7 @@ class ProductController extends Controller
     // )
     // ->orderBy('p.productname')
     // ->get();
-
+ //=========Eloquent ORM=========
     $list = Product::with([
         'category', 'brand'])
     ->select(
@@ -57,7 +59,13 @@ return view('admin.products.index', compact('list'));
      */
     public function create()
     {
-        return "trang tao product";
+        $categories = Category::select('cateid', 'catename')
+            ->orderBy('catename')
+            ->get();
+        $brands = Brand::select('id', 'brandname')
+            ->orderBy('brandname')
+            ->get();
+        return view('admin.products.create', compact('categories', 'brands'));
     }
 
     /**
@@ -65,7 +73,43 @@ return view('admin.products.index', compact('list'));
      */
     public function store(Request $request)
     {
-        return "luu product";
+           try {
+        $request->validate([
+            'productname' => 'required',
+            'price' => 'required',
+            'cateid' => 'required',
+            'brandid' => 'required',
+
+        ]);
+
+        // upload image
+        $imagePath = null;
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+        }
+
+        Product::create([
+            'productname' => $request->productname,
+            'slug' => $request->slug,
+            'price' => $request->price,
+            'pricediscount' => $request->pricediscount,
+            'image' => $imagePath,
+            'description' => $request->description,
+            'status' => $request->status,
+            'cateid' => $request->cateid,
+            'brandid' => $request->brandid,
+        ]);
+
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Thêm sản phẩm thành công!');
+
+    } catch (\Exception $e) {
+        return back()
+            ->with('error', 'Thêm sản phẩm thất bại!')
+            ->withInput();
+    }
     }
 
     /**
@@ -81,7 +125,14 @@ return view('admin.products.index', compact('list'));
      */
     public function edit(string $id)
     {
-        return "trang sua product: " ;
+        $product = Product::findOrFail($id);
+        $categories = Category::select('cateid', 'catename')
+            ->orderBy('catename')
+            ->get();
+        $brands = Brand::select('id', 'brandname')
+            ->orderBy('brandname')
+            ->get();
+        return view('admin.products.edit', compact('product', 'categories', 'brands'));
     }
 
     /**
@@ -89,7 +140,36 @@ return view('admin.products.index', compact('list'));
      */
     public function update(Request $request, string $id)
     {
-        return "trang cap nhat product: " ;
+        try {
+    $request->validate([
+        'productname' => 'required',
+        'price' => 'required',
+        'cateid' => 'required',     
+        'brandid' => 'required',
+    ]);
+
+    $product = Product::findOrFail($id);
+
+    $product->update([
+        'productname' => $request->productname,
+        'slug' => $request->slug,
+        'price' => $request->price,
+        'pricediscount' => $request->pricediscount,
+        'description' => $request->description,
+        'status' => $request->status,
+        'cateid' => $request->cateid,
+        'brandid' => $request->brandid,
+    ]);
+
+    return redirect()
+        ->route('admin.products.index')
+        ->with('success', 'Cập nhật sản phẩm thành công!');
+
+} catch (\Exception $e) {
+    return back()
+        ->with('error', 'Cập nhật sản phẩm thất bại!')
+        ->withInput();
+}
     }
 
     /**

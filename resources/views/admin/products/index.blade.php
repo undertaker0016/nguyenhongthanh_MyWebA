@@ -6,6 +6,24 @@
 
 <h2 class="mb-3">DANH SÁCH SẢN PHẨM</h2>
 
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Thành công!</strong> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Lỗi!</strong> {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
+
+<a href="{{ route('admin.products.create') }}" class="btn btn-success mb-3">
+    + Thêm mới
+</a>
+
 <table class="table table-bordered table-hover table-striped">
     <thead class="table-dark">
         <tr>
@@ -34,7 +52,7 @@
     <td>{{ number_format($item->price) }} ₫</td>
 
     <td>
-        {{ number_format($item->sale_price ?? 0) }} ₫
+        {{ number_format($item->pricediscount ?? 0) }} ₫
     </td>
 
     <td>
@@ -64,5 +82,7 @@
 @endforelse
 </tbody>
 </table>
+
+{{ $list->links() }}
 
 @endsection

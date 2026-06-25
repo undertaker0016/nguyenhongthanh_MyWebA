@@ -42,13 +42,23 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        Category::create([
-'catename' => $request->catename,
-'slug' => $request->slug,
-'status' => $request->status
-]);
+      $request->validate([
+        'catename' => 'required|unique:categories,catename',
+        'slug' => 'nullable|unique:categories,slug',
+    ]);
 
-    return redirect()->route('admin.categories.index');
+    Category::create([
+        'catename' => $request->catename,
+        'slug' => $request->slug,
+        'image' => null,
+        'status' => $request->status,
+        'sort_order' => $request->sort_order,
+        'description' => $request->description,
+        
+    ]);
+    return redirect()
+        ->route('admin.categories.index')
+        ->with('success', 'Thêm loại sản phẩm thành công!');
     }
 
     /**
