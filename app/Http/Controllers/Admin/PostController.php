@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\PostRequest;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -34,7 +35,7 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
         try {
             $request->validate([
@@ -89,24 +90,19 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(PostRequest $request, string $id)
     {
         try {
             $post = Post::findOrFail($id);
 
-            $request->validate([
-                'title' => 'required|min:3|max:255',
-                'content' => 'required',
-                'image' => 'nullable|string',
-                'status' => 'required|in:0,1',
-            ]);
-
+        
             $post->update([
                 'title' => $request->title,
                 'slug' => Str::slug($request->title),
                 'content' => $request->content,
                 'image' => $request->image,
                 'status' => $request->status,
+                'user_id' => Auth::id(),
             ]);
 
             return redirect()

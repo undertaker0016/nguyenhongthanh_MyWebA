@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -28,21 +29,8 @@ class UserController extends Controller
         return view('admin.users.create', compact('roles'));
     }
 
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        $request->validate([
-            'fullname' => 'required|min:3|max:100',
-            'username' => 'required|min:3|max:50|unique:users,username',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-            'phone' => 'nullable|regex:/^0[0-9]{9}$/',
-            'address' => 'nullable|max:255',
-            'gender' => 'nullable|in:1,2',
-            'birthday' => 'nullable|date|before:today',
-            'role' => 'required|in:1,2',
-            'status' => 'required|in:0,1',
-        ]);
-
         User::create([
             'fullname' => $request->fullname,
             'username' => $request->username,
@@ -59,31 +47,9 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')
             ->with('success', 'Thêm user thành công!');
     }
-    public function update(Request $request, string $id)
+    public function update(UserRequest $request, string $id)
     {
         $user = User::findOrFail($id);
-
-        $request->validate([
-            'fullname' => 'required|min:3|max:100',
-            'username' => [
-                'required',
-                'min:3',
-                'max:50',
-                Rule::unique('users', 'username')->ignore($id),
-            ],
-            'email' => [
-                'required',
-                'email',
-                Rule::unique('users', 'email')->ignore($id),
-            ],
-            'password' => 'nullable|min:6',
-            'phone' => 'nullable|regex:/^0[0-9]{9}$/',
-            'address' => 'nullable|max:255',
-            'gender' => 'nullable|in:1,2',
-            'birthday' => 'nullable|date|before:today',
-            'role' => 'required|in:1,2',
-            'status' => 'required|in:0,1',
-        ]);
 
         $data = [
             'fullname' => $request->fullname,

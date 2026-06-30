@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ProductRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Product;
@@ -69,17 +70,9 @@ return view('admin.products.index', compact('list'));
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
            try {
-        $request->validate([
-            'productname' => 'required',
-            'price' => 'required',
-            'cateid' => 'required',
-            'brandid' => 'required',
-
-        ]);
-
         // upload image
         $imagePath = null;
 
@@ -136,16 +129,9 @@ return view('admin.products.index', compact('list'));
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(ProductRequest $request, string $id)
     {
         try {
-    $request->validate([
-        'productname' => 'required',
-        'price' => 'required',
-        'cateid' => 'required',     
-        'brandid' => 'required',
-    ]);
-
     $product = Product::findOrFail($id);
 
     $product->update([

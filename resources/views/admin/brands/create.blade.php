@@ -4,17 +4,7 @@
     <div class="container">
         <h2>Thêm thương hiệu</h2>
 
-        @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>Lỗi!</strong>
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
+        <x-admin.alert />
 
         <form action="{{ route('admin.brands.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
