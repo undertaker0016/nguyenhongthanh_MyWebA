@@ -41,6 +41,12 @@ class BrandRequest extends FormRequest
                 'regex:/^[a-z0-9-]+$/',
             ],
             'status' => 'required|in:0,1',
+            'img' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:200',
+            ],
         ];
     }
     public function messages(): array
@@ -53,7 +59,9 @@ class BrandRequest extends FormRequest
             'slug.regex' => ':attribute chỉ được chứa chữ thường, số và dấu gạch ngang (-).',
             'status.in' => ':attribute không hợp lệ.',
             'description.max' => ':attribute không vượt quá :max ký tự.',
-            
+            'img.image' => 'File phải là hình ảnh.',
+            'img.mimes' => 'Chỉ chấp nhận jpg, jpeg, png, webp.',
+            'img.max' => 'Ảnh không được vượt quá 200KB.',
         ];
     }
     public function attributes(): array
@@ -63,6 +71,7 @@ class BrandRequest extends FormRequest
             'slug' => 'Đường dẫn (Slug)',
             'status' => 'Trạng thái',
             'description' => 'Mô tả',
-        ];
+            'img' => 'Hình ảnh',
+        ];  
     }
 }

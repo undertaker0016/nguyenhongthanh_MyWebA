@@ -105,18 +105,46 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Hình ảnh</label>
-                @if ($product->image)
-                    <div class="mb-2">
-                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->productname }}"
-                            width="100" height="100" class="img-thumbnail">
-                    </div>
-                @endif
-                <input type="file" name="image" class="form-control @error('image') is-invalid @enderror"
+            <div class="mb-3 img-group">
+                <label class="form-label">Hình ảnh chính</label>
+                <input type="file" name="image" class="form-control img-input @error('image') is-invalid @enderror"
                     accept="image/*">
+                <div class="img-preview mt-2">
+                    @if ($product->image)
+                        <img src="{{ asset('storage/products/' . $product->image) }}" alt="{{ $product->productname }}"
+                            class="img-thumbnail" width="120">
+                    @endif
+                </div>
                 <small class="text-muted">Để trống nếu không thay đổi hình ảnh</small>
                 @error('image')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="mb-3 img-group">
+                <label class="form-label">Hình ảnh phụ</label>
+                <input type="file" name="images[]" class="form-control img-input @error('images') is-invalid @enderror"
+                    accept="image/*" multiple>
+                <div class="img-preview mt-2">
+                    @foreach ($product->images as $image)
+                        <div class="d-inline-block position-relative me-2 mb-2">
+                            <img src="{{ asset('storage/products/' . $image->image) }}" alt="{{ $product->productname }}"
+                                class="img-thumbnail" width="100">
+                            <form action="{{ route('admin.products.deleteImage', $image->id) }}" method="POST"
+                                style="position: absolute; top: 0; right: 0;" onsubmit="return confirm('Bạn có chắc muốn xóa ảnh này?')">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger btn-sm" style="border-radius: 0;">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    @endforeach
+                </div>
+                @error('images')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+                @error('images.*')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>

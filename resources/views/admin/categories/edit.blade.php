@@ -28,16 +28,16 @@
                 @enderror
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3 img-group">
                 <label>Hình ảnh</label>
-                @if ($category->image)
-                    <div class="mb-2">
-                        <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->catename }}" width="100"
-                            height="100" class="img-thumbnail">
-                    </div>
-                @endif
-                <input type="file" name="image" class="form-control @error('image') is-invalid @enderror"
+                <input type="file" name="image" class="form-control img-input @error('image') is-invalid @enderror"
                     accept="image/*">
+                <div class="img-preview mt-2">
+                    @if ($category->image)
+                        <img src="{{ asset('storage/categories/' . $category->image) }}" alt="{{ $category->catename }}" width="100"
+                            height="100" class="img-thumbnail">
+                    @endif
+                </div>
                 @error('image')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror

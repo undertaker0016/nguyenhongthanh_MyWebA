@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use App\Models\Category;
-
+use Illuminate\Support\Str;
 class CategoryController extends Controller
 {
     /**
@@ -42,13 +42,13 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        // param1 : khai báo tên trường, 
+   public function store(Request $request)
+{
+    try {
+
         $request->validate([
             'catename' => 'required|min:3|max:100|unique:categories,catename',
-            'slug' =>
-            [
+            'slug' => [
                 'required',
                 'min:3',
                 'max:150',
@@ -58,47 +58,63 @@ class CategoryController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'description' => 'nullable|max:1000',
             'status' => 'required|in:0,1',
-            [
-                // param2 : khai báo thông báo lỗi
-                'catename.required' => 'Tên loại sản phẩm không được để trống.',
-                'catename.min' => 'Tên loại sản phẩm phải có ít nhất :min ký tự.',
-                'catename.max' => 'Tên loại sản phẩm không được vượt quá :max ký tự.',
-                'catename.unique' => 'Tên loại sản phẩm đã tồn tại.',
-                'slug.required' => 'Slug không được để trống.',
-                'slug.min' => 'Slug phải có ít nhất :min ký tự.',
-                'slug.max' => 'Slug không được vượt quá :max ký tự.',
-                'slug.regex' => 'Slug chỉ được chứa các ký tự thường, số và dấu gạch ngang.',
-                'slug.unique' => 'Slug đã tồn tại.',
-                'image.image' => 'File tải lên phải là hình ảnh.',
-                'status.in' => 'Trạng thái không hợp lệ.',
-            ],
-            [
-                // param3 : khai báo tên trường hiển thị trong thông báo lỗi
-                'catename' => 'Tên loại sản phẩm',
-                'slug' => 'Slug',
-                'image' => 'Hình ảnh',
-                'status' => 'Trạng thái',
-            ]
+        ],[
+            'catename.required' => 'Tên loại sản phẩm không được để trống.',
+            'catename.min' => 'Tên loại sản phẩm phải có ít nhất :min ký tự.',
+            'catename.max' => 'Tên loại sản phẩm không được vượt quá :max ký tự.',
+            'catename.unique' => 'Tên loại sản phẩm đã tồn tại.',
+
+            'slug.required' => 'Slug không được để trống.',
+            'slug.min' => 'Slug phải có ít nhất :min ký tự.',
+            'slug.max' => 'Slug không được vượt quá :max ký tự.',
+            'slug.regex' => 'Slug chỉ được chứa ký tự thường, số và dấu gạch ngang.',
+            'slug.unique' => 'Slug đã tồn tại.',
+
+            'image.image' => 'File tải lên phải là hình ảnh.',
+            'status.in' => 'Trạng thái không hợp lệ.',
         ]);
 
-        $imagePath = null;
+
+        $fileName = null;
+
+
+        // Upload hình ảnh sau khi validate
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('categories', 'public');
+
+            $file = $request->file('image');
+
+            $fileName = Str::slug($request->catename)
+                . '-' . time()
+                . '.' . $file->extension();
+
+            $file->storeAs('categories', $fileName, 'public');
         }
+
 
         Category::create([
             'catename' => $request->catename,
             'slug' => $request->slug,
-            'image' => $imagePath,
+            'image' => $fileName,
             'status' => $request->status,
             'sort_order' => $request->sort_order,
             'description' => $request->description,
         ]);
 
+
         return redirect()
             ->route('admin.categories.index')
             ->with('success', 'Thêm loại sản phẩm thành công!');
+
+
+    } catch (\Exception $e) {
+
+        return redirect()
+            ->back()
+            ->withInput()
+            ->with('error', 'Thêm loại sản phẩm thất bại!');
     }
+}
+    
 
     /**
      * Display the specified resource.
@@ -136,6 +152,7 @@ class CategoryController extends Controller
                     'regex:/^[a-z0-9-]+$/',
                     Rule::unique('categories', 'slug')->ignore($id, 'cateid'),
                 ],
+                'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
                 'status' => 'required|in:0,1'
             ],
             // Param 2: Messages - tùy chỉnh nội dung thông báo lỗi
@@ -145,24 +162,45 @@ class CategoryController extends Controller
                 'max' => ':attribute không vượt quá :max ký tự.',
                 'unique' => ':attribute đã tồn tại.',
                 'slug.regex' => ':attribute chỉ được chứa chữ thường, số và dấu gạch ngang (-).',
-                'status.in' => ':attribute không hợp lệ.'
+                'status.in' => ':attribute không hợp lệ.',
+                'image.image' => ':attribute phải là hình ảnh.',
+                'image.mimes' => ':attribute chỉ chấp nhận các định dạng: jpg, jpeg, png, webp.',
+                'image.max' => ':attribute không được vượt quá 2048 KB.',
             ],
             // Param 3: Attributes - tên hiển thị của các trường
             [
                 'catename' => 'Tên loại',
                 'slug' => 'Đường dẫn (Slug)',
-                'status' => 'Trạng thái'
+                'status' => 'Trạng thái',
+                'image' => 'Hình ảnh',
             ]
         );
 
         
         try {
+            // Xử lý hình ảnh
+            $fileName = $category->image;
+            if ($request->hasFile('image')) {
+                // Xóa hình ảnh cũ
+                if ($category->image) {
+                    Storage::disk('public')->delete('categories/' . $category->image);
+                }
+
+                // Upload hình ảnh mới
+                $file = $request->file('image');
+                $fileName = Str::slug($request->catename)
+                    . '-' . time()
+                    . '.' . $file->extension();
+                $file->storeAs('categories', $fileName, 'public');
+            }
+
             $category->update([
                 'catename' => $request->catename,
                 'slug' => $request->slug,
                 'status' => $request->status,
                 'sort_order' => $request->sort_order,
                 'description' => $request->description,
+                'image' => $fileName,
             ]);
 
             return redirect()

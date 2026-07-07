@@ -28,6 +28,7 @@
         <thead class="table-dark">
             <tr>
                 <th>STT</th>
+                <th>Ảnh</th>
                 <th>Tên sản phẩm</th>
                 <th>Danh mục</th>
                 <th>Thương hiệu</th>
@@ -42,6 +43,14 @@
             @forelse($list as $item)
                 <tr>
                     <td>{{ $list->firstItem() + $loop->index }}</td>
+
+                    <td>
+                        @if ($item->image)
+                            <img src="{{ asset('storage/products/' . $item->image) }}" alt="{{ $item->productname }}" class="img-thumbnail rounded" width="60" height="60">
+                        @else
+                            <span class="text-muted">Không có ảnh</span>
+                        @endif
+                    </td>
 
                     <td>{{ $item->productname }}</td>
 
@@ -76,7 +85,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" class="text-center">Không có dữ liệu</td>
+                    <td colspan="9" class="text-center">Không có dữ liệu</td>
                 </tr>
             @endforelse
         </tbody>

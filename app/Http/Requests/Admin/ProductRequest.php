@@ -39,6 +39,21 @@ class ProductRequest extends FormRequest
             'cateid' => ['required', 'exists:categories,cateid'],
             'brandid' => ['nullable', 'exists:brands,id'],
             'description' => ['nullable', 'string', 'regex:/^[^@!$^]*$/'],
+            'image' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:2048',
+            ],
+            'images' => [
+                'nullable',
+                'array',
+            ],
+            'images.*' => [
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:2048',
+            ],
         ];
     }
 
@@ -61,6 +76,12 @@ class ProductRequest extends FormRequest
             'cateid.exists' => ':attribute không hợp lệ hoặc chưa tồn tại.',
             'brandid.exists' => ':attribute không hợp lệ hoặc chưa tồn tại.',
             'description.regex' => ':attribute không được chứa ký tự @, !, $, ^.',
+            'image.image' => ':attribute phải là hình ảnh.',
+            'image.mimes' => ':attribute chỉ chấp nhận các định dạng: jpg, jpeg, png, webp.',
+            'image.max' => ':attribute không được vượt quá 2048 KB.',
+            'images.*.image' => ':attribute phải là hình ảnh.',
+            'images.*.mimes' => ':attribute chỉ chấp nhận các định dạng: jpg, jpeg, png, webp.',
+            'images.*.max' => ':attribute không được vượt quá 2048 KB.',
         ];
     }
 
@@ -75,6 +96,9 @@ class ProductRequest extends FormRequest
             'cateid' => 'Loại sản phẩm',
             'brandid' => 'Thương hiệu',
             'description' => 'Mô tả',
+            'image' => 'Hình ảnh chính',
+            'images' => 'Hình ảnh phụ',
+            'images.*' => 'Hình ảnh phụ',
         ];
     }
 }

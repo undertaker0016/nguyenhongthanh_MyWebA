@@ -103,11 +103,25 @@
                 </div>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3 img-group">
                 <label class="form-label">Hình ảnh</label>
-                <input type="file" name="image" class="form-control @error('image') is-invalid @enderror"
+                <input type="file" name="image" class="form-control img-input @error('image') is-invalid @enderror"
                     accept="image/*">
+                <div class="img-preview mt-2"></div>
                 @error('image')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="mb-3 img-group">
+                <label class="form-label">Hình ảnh phụ</label>
+                <input type="file" name="images[]" class="form-control img-input @error('images') is-invalid @enderror"
+                    accept="image/*" multiple>
+                <div class="img-preview mt-2"></div>
+                @error('images')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+                @error('images.*')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>

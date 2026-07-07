@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\Category;
 use App\Models\Brand;
+use Illuminate\Support\Str;
 class ProductController extends Controller
 {
     public function test1()  {
@@ -72,35 +75,57 @@ return view('admin.products.index', compact('list'));
      */
     public function store(ProductRequest $request)
     {
-           try {
-        // upload image
-        $imagePath = null;
+        try {
+            // Upload hình ảnh chính
+            $fileName = null;
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $fileName = Str::slug($request->productname)
+                    . '-' . time()
+                    . '.' . $file->extension();
+                $file->storeAs('products', $fileName, 'public');
+            }
 
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
+            // Lưu sản phẩm
+            $product = Product::create([
+                'productname' => $request->productname,
+                'slug' => $request->slug,
+                'cateid' => $request->cateid,
+                'brandid' => $request->brandid,
+                'price' => $request->price,
+                'pricediscount' => $request->pricediscount ?? 0,
+                'description' => $request->description,
+                'status' => $request->status,
+                'image' => $fileName,
+            ]);
+
+            // Upload hình ảnh phụ
+            if ($request->hasFile('images')) {
+                $i = 1;
+                $time = time();
+                foreach ($request->file('images') as $file) {
+                    $fileName = $product->id
+                        . '_' . $time . '_' . $i . '.' . $file->extension();
+                    $file->storeAs('products', $fileName, 'public');
+
+                    // Lưu vào bảng product_images
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image' => $fileName,
+                    ]);
+                    $i++;
+                }
+            }
+
+            return redirect()
+                ->route('admin.products.index')
+                ->with('success', 'Thêm sản phẩm thành công!');
+
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Thêm sản phẩm thất bại!')
+                ->withInput();
         }
-
-        Product::create([
-            'productname' => $request->productname,
-            'slug' => $request->slug,
-            'price' => $request->price,
-            'pricediscount' => $request->pricediscount,
-            'image' => $imagePath,
-            'description' => $request->description,
-            'status' => $request->status,
-            'cateid' => $request->cateid,
-            'brandid' => $request->brandid,
-        ]);
-
-        return redirect()
-            ->route('admin.products.index')
-            ->with('success', 'Thêm sản phẩm thành công!');
-
-    } catch (\Exception $e) {
-        return back()
-            ->with('error', 'Thêm sản phẩm thất bại!')
-            ->withInput();
-    }
     }
 
     /**
@@ -116,7 +141,7 @@ return view('admin.products.index', compact('list'));
      */
     public function edit(string $id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with('images')->findOrFail($id);
         $categories = Category::select('cateid', 'catename')
             ->orderBy('catename')
             ->get();
@@ -132,28 +157,64 @@ return view('admin.products.index', compact('list'));
     public function update(ProductRequest $request, string $id)
     {
         try {
-    $product = Product::findOrFail($id);
+            $product = Product::findOrFail($id);
 
-    $product->update([
-        'productname' => $request->productname,
-        'slug' => $request->slug,
-        'price' => $request->price,
-        'pricediscount' => $request->pricediscount,
-        'description' => $request->description,
-        'status' => $request->status,
-        'cateid' => $request->cateid,
-        'brandid' => $request->brandid,
-    ]);
+            // Xử lý hình ảnh chính
+            if ($request->hasFile('image')) {
+                // Xóa hình ảnh cũ
+                if ($product->image) {
+                    Storage::disk('public')->delete('products/' . $product->image);
+                }
 
-    return redirect()
-        ->route('admin.products.index')
-        ->with('success', 'Cập nhật sản phẩm thành công!');
+                // Upload hình ảnh mới
+                $file = $request->file('image');
+                $fileName = Str::slug($request->productname)
+                    . '-' . time()
+                    . '.' . $file->extension();
+                $file->storeAs('products', $fileName, 'public');
+                $product->image = $fileName;
+            }
 
-} catch (\Exception $e) {
-    return back()
-        ->with('error', 'Cập nhật sản phẩm thất bại!')
-        ->withInput();
-}
+            // Cập nhật thông tin sản phẩm
+            $product->update([
+                'productname' => $request->productname,
+                'slug' => $request->slug,
+                'price' => $request->price,
+                'pricediscount' => $request->pricediscount,
+                'description' => $request->description,
+                'status' => $request->status,
+                'cateid' => $request->cateid,
+                'brandid' => $request->brandid,
+                'image' => $product->image,
+            ]);
+
+            // Xử lý hình ảnh phụ
+            if ($request->hasFile('images')) {
+                $i = 1;
+                $time = time();
+                foreach ($request->file('images') as $file) {
+                    $fileName = $product->id
+                        . '_' . $time . '_' . $i . '.' . $file->extension();
+                    $file->storeAs('products', $fileName, 'public');
+
+                    // Lưu vào bảng product_images
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image' => $fileName,
+                    ]);
+                    $i++;
+                }
+            }
+
+            return redirect()
+                ->route('admin.products.index')
+                ->with('success', 'Cập nhật sản phẩm thành công!');
+
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Cập nhật sản phẩm thất bại!')
+                ->withInput();
+        }
     }
 
     /**
@@ -162,5 +223,25 @@ return view('admin.products.index', compact('list'));
     public function destroy(string $id)
     {
         return "xoa product: " ;
+    }
+
+    /**
+     * Delete product image.
+     */
+    public function deleteImage(string $imageId)
+    {
+        try {
+            $productImage = ProductImage::findOrFail($imageId);
+            
+            // Xóa file từ storage
+            Storage::disk('public')->delete('products/' . $productImage->image);
+            
+            // Xóa record từ database
+            $productImage->delete();
+
+            return redirect()->back()->with('success', 'Xóa hình ảnh thành công!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Xóa hình ảnh thất bại!');
+        }
     }
 }

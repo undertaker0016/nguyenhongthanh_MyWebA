@@ -11,8 +11,8 @@
 
             <div class="mb-3">
                 <label>Tên thương hiệu</label>
-                <input type="text" name="brandname" class="form-control @error('brandname') is-invalid @enderror"
-                    required value="{{ old('brandname') }}">
+                <input type="text" name="brandname" class="form-control @error('brandname') is-invalid @enderror" required
+                    value="{{ old('brandname') }}">
                 @error('brandname')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
@@ -27,13 +27,11 @@
                 @enderror
             </div>
 
-            <div class="mb-3">
-                <label>Hình ảnh</label>
-                <input type="file" name="image" class="form-control @error('image') is-invalid @enderror"
-                    accept="image/*">
-                @error('image')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
+            <div class="mb-3 img-group">
+                <label class="form-label">Hình ảnh</label>
+                <input type="file" name="img" class="form-control img-input">
+                <div class="img-preview mt-2"></div>
+                {{-- hiển thị lỗi cho trường img --}}
             </div>
 
             <div class="mb-3">

@@ -45,7 +45,7 @@
                         <td>{{ $list->firstItem() + $key }}</td>
 
                         <td>
-                            <img src="{{ asset('images/category/' . ($item->image ?: 'default.png')) }}"
+                            <img src="{{ asset('storage/categories/' . ($item->image ?: 'default.png')) }}"
                                 alt="{{ $item->catename }}" width="80" height="80" class="img-thumbnail rounded">
                         </td>
 

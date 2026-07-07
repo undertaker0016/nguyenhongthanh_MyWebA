@@ -45,8 +45,12 @@
                         <td>{{ $key + 1 }}</td>
 
                         <td>
-                            <img src="{{ asset('images/brand/' . ($item->image ?: 'default.png')) }}"
-                                alt="{{ $item->brandname }}" width="80" height="80" class="img-thumbnail rounded">
+                            @if ($item->image)
+                                <img src="{{ asset('storage/brands/' . $item->image) }}" width="100" height="100"
+                                    class="img-thumbnail">
+                            @else
+                                <span class="text-muted">Không có ảnh</span>
+                            @endif
                         </td>
 
                         <td>{{ $item->id }}</td>
