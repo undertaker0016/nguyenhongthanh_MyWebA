@@ -18,11 +18,23 @@
         @endif
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>Danh sách loại sản phẩm</h3>
 
-            <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">
-                + Thêm loại sản phẩm
-            </a>
+            <h3 class="mb-0">
+                Danh sách loại sản phẩm
+            </h3>
+            <div class="d-flex gap-2">
+                <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">
+                    + Thêm loại sản phẩm
+                </a>
+                <a href="{{ route('admin.categories.trash') }}" class="btn btn-danger">
+
+                    🗑 Thùng rác
+                    <span class="badge bg-light text-danger">
+                        {{ $trashCount }}
+                    </span>
+
+                </a>
+            </div>
         </div>
 
         <table class="table table-bordered table-hover align-middle">
@@ -100,7 +112,6 @@
         <div class="d-flex justify-content-center">
             {{ $list->links() }}
         </div>
-        ```
 
     </div>
 @endsection

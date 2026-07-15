@@ -1,11 +1,12 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
+    use SoftDeletes;
    //chỉ định tên bảng trong database
    //có thể bỏ qua jhai báo $table nếu tên bảng trùng với tên model (số nhiều)
    protected $table = 'categories';

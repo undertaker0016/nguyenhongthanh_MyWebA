@@ -55,7 +55,9 @@ class ProductController extends Controller
         'brandid')
     ->orderBy('productname')
     ->paginate($limit);
-return view('admin.products.index', compact('list'));
+        $trashCount = Product::onlyTrashed()->count();
+
+        return view('admin.products.index', compact('list', 'trashCount'));
     }
 
     /**
@@ -222,7 +224,64 @@ return view('admin.products.index', compact('list'));
      */
     public function destroy(string $id)
     {
-        return "xoa product: " ;
+        try {
+            Product::findOrFail($id)->delete();
+
+            return redirect()->route('admin.products.index')->with('success', 'Xóa sản phẩm thành công');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Xóa sản phẩm thất bại');
+        }
+    }
+
+    public function trash()
+    {
+        $list = Product::onlyTrashed()->orderBy('deleted_at', 'desc')->paginate(10);
+
+        return view('admin.products.trash', compact('list'));
+    }
+
+    public function restore($id)
+    {
+        try {
+            Product::onlyTrashed()->findOrFail($id)->restore();
+
+            return redirect()->route('admin.products.trash')->with('success', 'Khôi phục sản phẩm thành công.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Khôi phục sản phẩm thất bại.');
+        }
+    }
+
+    public function forceDelete($id)
+    {
+        try {
+            Product::onlyTrashed()->findOrFail($id)->forceDelete();
+
+            return redirect()->route('admin.products.trash')->with('success', 'Xóa vĩnh viễn sản phẩm thành công.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Xóa sản phẩm thất bại.');
+        }
+    }
+
+    public function restoreAll()
+    {
+        try {
+            Product::onlyTrashed()->restore();
+
+            return redirect()->route('admin.products.trash')->with('success', 'Khôi phục tất cả sản phẩm thành công.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Khôi phục tất cả sản phẩm thất bại.');
+        }
+    }
+
+    public function forceDeleteAll()
+    {
+        try {
+            Product::onlyTrashed()->forceDelete();
+
+            return redirect()->route('admin.products.trash')->with('success', 'Xóa vĩnh viễn tất cả sản phẩm thành công.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Xóa vĩnh viễn tất cả sản phẩm thất bại.');
+        }
     }
 
     /**

@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
+    use SoftDeletes;
    //chỉ định tên bảng trong database
    //có thể bỏ qua jhai báo $table nếu tên bảng trùng với tên model (số nhiều)
    protected $table = 'products';

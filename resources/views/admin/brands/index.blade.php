@@ -20,9 +20,14 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3>Danh sách thương hiệu</h3>
 
-            <a href="{{ route('admin.brands.create') }}" class="btn btn-primary">
-                + Thêm thương hiệu
-            </a>
+            <div>
+                <a href="{{ route('admin.brands.trash') }}" class="btn btn-outline-secondary">
+                    Thùng rác ({{ $trashCount ?? 0 }})
+                </a>
+                <a href="{{ route('admin.brands.create') }}" class="btn btn-primary">
+                    + Thêm thương hiệu
+                </a>
+            </div>
         </div>
 
         <table class="table table-bordered table-hover align-middle">
@@ -44,13 +49,9 @@
                     <tr>
                         <td>{{ $key + 1 }}</td>
 
-                        <td>
-                            @if ($item->image)
-                                <img src="{{ asset('storage/brands/' . $item->image) }}" width="100" height="100"
-                                    class="img-thumbnail">
-                            @else
-                                <span class="text-muted">Không có ảnh</span>
-                            @endif
+                         <td>
+                            <img src="{{ asset('storage/brands/' . ($item->image ?: 'default.png')) }}"
+                                alt="{{ $item->catename }}" width="80" height="80" class="img-thumbnail rounded">
                         </td>
 
                         <td>{{ $item->id }}</td>

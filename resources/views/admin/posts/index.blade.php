@@ -19,9 +19,14 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3>Danh sách bài viết</h3>
 
-            <a href="{{ route('admin.posts.create') }}" class="btn btn-primary">
-                + Thêm bài viết
-            </a>
+            <div>
+                <a href="{{ route('admin.posts.trash') }}" class="btn btn-outline-secondary">
+                    Thùng rác ({{ $trashCount ?? 0 }})
+                </a>
+                <a href="{{ route('admin.posts.create') }}" class="btn btn-primary">
+                    + Thêm bài viết
+                </a>
+            </div>
         </div>
 
         <table class="table table-bordered table-hover align-middle">
@@ -47,9 +52,8 @@
                         <td>{{ $item->slug }}</td>
 
                         <td>
-                            @if ($item->image)
-                                <img src="{{ asset('storage/' . $item->image) }}" width="80" class="rounded">
-                            @endif
+                            <img src="{{ asset('storage/posts/' . ($item->image ?: 'default.png')) }}"
+                                alt="{{ $item->catename }}" width="80" height="80" class="img-thumbnail rounded">
                         </td>
 
                         <td>

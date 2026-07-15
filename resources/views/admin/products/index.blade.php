@@ -20,9 +20,14 @@
         </div>
     @endif
 
-    <a href="{{ route('admin.products.create') }}" class="btn btn-success mb-3">
-        + Thêm mới
-    </a>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{{ route('admin.products.create') }}" class="btn btn-success">
+            + Thêm mới
+        </a>
+        <a href="{{ route('admin.products.trash') }}" class="btn btn-outline-secondary">
+            Thùng rác ({{ $trashCount ?? 0 }})
+        </a>
+    </div>
 
     <table class="table table-bordered table-hover table-striped">
         <thead class="table-dark">
@@ -45,11 +50,8 @@
                     <td>{{ $list->firstItem() + $loop->index }}</td>
 
                     <td>
-                        @if ($item->image)
-                            <img src="{{ asset('storage/products/' . $item->image) }}" alt="{{ $item->productname }}" class="img-thumbnail rounded" width="60" height="60">
-                        @else
-                            <span class="text-muted">Không có ảnh</span>
-                        @endif
+                        <img src="{{ asset('storage/products/' . ($item->image ?: 'default.png')) }}"
+                            alt="{{ $item->catename }}" width="80" height="80" class="img-thumbnail rounded">
                     </td>
 
                     <td>{{ $item->productname }}</td>

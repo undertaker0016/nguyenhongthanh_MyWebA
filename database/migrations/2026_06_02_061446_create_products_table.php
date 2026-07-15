@@ -23,6 +23,7 @@ return new class extends Migration
         $table->text('description')->nullable();
         $table->tinyInteger('status')->default(1);
         $table->timestamps();
+        $table->softDeletes();
 
         // khóa ngoại với bảng brands
         $table->foreignId('brandid')

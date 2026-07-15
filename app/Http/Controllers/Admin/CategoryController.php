@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use App\Models\Category;
 use Illuminate\Support\Str;
+
 class CategoryController extends Controller
 {
     /**
@@ -16,6 +17,7 @@ class CategoryController extends Controller
      */
     public function index($limit = 10)
     {
+
         //=========query builder=========
         // $list = DB::table('categories')
         //     ->select('cateid', 'catename', 'slug', 'image', 'status')
@@ -27,7 +29,8 @@ class CategoryController extends Controller
         $list = Category::select('cateid', 'catename', 'slug', 'image', 'status')
             ->orderBy('catename')
             ->paginate($limit);
-        return view('admin.categories.index', compact('list'));
+        $trashCount = Category::onlyTrashed()->count();
+        return view('admin.categories.index', compact('list', 'trashCount'));
     }
 
     /**
@@ -42,79 +45,77 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-   public function store(Request $request)
-{
-    try {
+    public function store(Request $request)
+    {
+        try {
 
-        $request->validate([
-            'catename' => 'required|min:3|max:100|unique:categories,catename',
-            'slug' => [
-                'required',
-                'min:3',
-                'max:150',
-                'regex:/^[a-z0-9-]+$/',
-                'unique:categories,slug',
-            ],
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'description' => 'nullable|max:1000',
-            'status' => 'required|in:0,1',
-        ],[
-            'catename.required' => 'Tên loại sản phẩm không được để trống.',
-            'catename.min' => 'Tên loại sản phẩm phải có ít nhất :min ký tự.',
-            'catename.max' => 'Tên loại sản phẩm không được vượt quá :max ký tự.',
-            'catename.unique' => 'Tên loại sản phẩm đã tồn tại.',
+            $request->validate([
+                'catename' => 'required|min:3|max:100|unique:categories,catename',
+                'slug' => [
+                    'required',
+                    'min:3',
+                    'max:150',
+                    'regex:/^[a-z0-9-]+$/',
+                    'unique:categories,slug',
+                ],
+                'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+                'description' => 'nullable|max:1000',
+                'status' => 'required|in:0,1',
+            ], [
+                'catename.required' => 'Tên loại sản phẩm không được để trống.',
+                'catename.min' => 'Tên loại sản phẩm phải có ít nhất :min ký tự.',
+                'catename.max' => 'Tên loại sản phẩm không được vượt quá :max ký tự.',
+                'catename.unique' => 'Tên loại sản phẩm đã tồn tại.',
 
-            'slug.required' => 'Slug không được để trống.',
-            'slug.min' => 'Slug phải có ít nhất :min ký tự.',
-            'slug.max' => 'Slug không được vượt quá :max ký tự.',
-            'slug.regex' => 'Slug chỉ được chứa ký tự thường, số và dấu gạch ngang.',
-            'slug.unique' => 'Slug đã tồn tại.',
+                'slug.required' => 'Slug không được để trống.',
+                'slug.min' => 'Slug phải có ít nhất :min ký tự.',
+                'slug.max' => 'Slug không được vượt quá :max ký tự.',
+                'slug.regex' => 'Slug chỉ được chứa ký tự thường, số và dấu gạch ngang.',
+                'slug.unique' => 'Slug đã tồn tại.',
 
-            'image.image' => 'File tải lên phải là hình ảnh.',
-            'status.in' => 'Trạng thái không hợp lệ.',
-        ]);
-
-
-        $fileName = null;
+                'image.image' => 'File tải lên phải là hình ảnh.',
+                'status.in' => 'Trạng thái không hợp lệ.',
+            ]);
 
 
-        // Upload hình ảnh sau khi validate
-        if ($request->hasFile('image')) {
+            $fileName = null;
 
-            $file = $request->file('image');
 
-            $fileName = Str::slug($request->catename)
-                . '-' . time()
-                . '.' . $file->extension();
+            // Upload hình ảnh sau khi validate
+            if ($request->hasFile('image')) {
 
-            $file->storeAs('categories', $fileName, 'public');
+                $file = $request->file('image');
+
+                $fileName = Str::slug($request->catename)
+                    . '-' . time()
+                    . '.' . $file->extension();
+
+                $file->storeAs('categories', $fileName, 'public');
+            }
+
+
+            Category::create([
+                'catename' => $request->catename,
+                'slug' => $request->slug,
+                'image' => $fileName,
+                'status' => $request->status,
+                'sort_order' => $request->sort_order,
+                'description' => $request->description,
+            ]);
+
+
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('success', 'Thêm loại sản phẩm thành công!');
+        } catch (\Exception $e) {
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Thêm loại sản phẩm thất bại!');
         }
-
-
-        Category::create([
-            'catename' => $request->catename,
-            'slug' => $request->slug,
-            'image' => $fileName,
-            'status' => $request->status,
-            'sort_order' => $request->sort_order,
-            'description' => $request->description,
-        ]);
-
-
-        return redirect()
-            ->route('admin.categories.index')
-            ->with('success', 'Thêm loại sản phẩm thành công!');
-
-
-    } catch (\Exception $e) {
-
-        return redirect()
-            ->back()
-            ->withInput()
-            ->with('error', 'Thêm loại sản phẩm thất bại!');
     }
-}
-    
+
 
     /**
      * Display the specified resource.
@@ -176,7 +177,7 @@ class CategoryController extends Controller
             ]
         );
 
-        
+
         try {
             // Xử lý hình ảnh
             $fileName = $category->image;
@@ -218,6 +219,115 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        return "category destroy: ";
+        try {
+
+            Category::findOrFail($id)
+                ->delete();
+
+
+            return redirect()
+                ->route('admin.categories.index')
+                ->with(
+                    'success',
+                    'Xóa thành công'
+                );
+        } catch (\Exception $e) {
+
+
+            return back()
+                ->with(
+                    'error',
+                    'Xóa thất bại'
+                );
+        }
+    }
+    public function trash()
+    {
+
+        $list = Category::onlyTrashed()
+            ->orderBy('deleted_at', 'desc')
+            ->paginate(10);
+
+
+        return view(
+            'admin.categories.trash',
+            compact('list')
+        );
+    }
+    // khôi phục dữ liệu đã xóa
+    public function restore($id)
+    {
+        try {
+            Category::onlyTrashed()->findOrFail($id)->restore();
+            return redirect()
+                ->route('admin.categories.trash')
+                ->with('success', 'Khôi phục thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Khôi phục thất bại.');
+        }
+    }
+    // xóa vĩnh viễn
+    public function forceDelete($id)
+    {
+        try {
+            Category::onlyTrashed()->findOrFail($id)->forceDelete();
+            return redirect()
+                ->route('admin.categories.trash')
+                ->with('success', 'Xóa vĩnh viễn thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Xóa thất bại.');
+        }
+    }
+    public function restoreAll()
+    {
+
+        try {
+
+
+            Category::onlyTrashed()
+                ->restore();
+
+
+            return redirect()
+                ->route('admin.categories.trash')
+                ->with(
+                    'success',
+                    'Khôi phục tất cả thành công.'
+                );
+        } catch (\Exception $e) {
+
+
+            return back()
+                ->with(
+                    'error',
+                    'Khôi phục thất bại.'
+                );
+        }
+    }
+    public function forceDeleteAll()
+    {
+        try {
+
+            Category::onlyTrashed()->forceDelete();
+
+
+            return redirect()
+                ->route('admin.categories.trash')
+                ->with(
+                    'success',
+                    'Xóa vĩnh viễn tất cả thành công.'
+                );
+        } catch (\Exception $e) {
+
+            return back()
+                ->with(
+                    'error',
+                    'Xóa thất bại.'
+                );
+        }
     }
 }

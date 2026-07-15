@@ -26,11 +26,15 @@ return new class extends Migration
 
             $table->date('birthday')->nullable();
 
-            // 1 = user, 2 = admin
-            $table->unsignedTinyInteger('role')->default(1);
+            // 1 = admin, 2 = user
+            $table->unsignedTinyInteger('role')->default(2);
+
 
             // 1 = active, 0 = block
             $table->tinyInteger('status')->default(1);
+
+            $table->softDeletes();
+            $table->rememberToken();
 
             $table->timestamps();
         });
