@@ -110,7 +110,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // User
     Route::resource('products',ProductController::class)
         ->only(['index'])
-        ->middleware('roles:2');
+        ->middleware('roles:1,2');
 
     // Các chức năng yêu cầu đăng nhập}}
     Route::middleware('auth')->group(function () {
