@@ -1,0 +1,257 @@
+/* ==============================
+   ADMIN DASHBOARD STYLE - LAB 13
+   ============================== */
+
+/* Tổng thể */
+body {
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    background: #f4f6f9;
+    color: #343a40;
+}
+
+
+/* ==============================
+   HEADER
+   ============================== */
+
+header,
+.navbar {
+    background: #ffffff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+
+/* ==============================
+   SIDEBAR
+   ============================== */
+
+.sidebar {
+    min-height: 100vh;
+    background: linear-gradient(
+        180deg,
+        #111827,
+        #1f2937
+    );
+}
+
+.sidebar a {
+    color: #d1d5db;
+    text-decoration: none;
+    padding: 12px 18px;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    background: #2563eb;
+    color: white;
+    border-radius: 8px;
+}
+
+
+/* ==============================
+   TITLE
+   ============================== */
+
+h1, h2, h3 {
+    font-weight: 700;
+    color: #1e293b;
+}
+
+
+/* ==============================
+   CARD
+   ============================== */
+
+.card {
+    border: none;
+    border-radius: 16px;
+    background: white;
+    box-shadow:
+        0 5px 20px rgba(0,0,0,0.06);
+    transition: .3s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 10px 25px rgba(0,0,0,0.1);
+}
+
+
+/* ==============================
+   BUTTON
+   ============================== */
+
+.btn {
+    border-radius: 10px;
+    padding: 8px 18px;
+    font-weight: 600;
+    transition: .3s;
+}
+
+.btn-primary {
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+    border: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+}
+
+
+/* ==============================
+   FORM
+   ============================== */
+
+.form-control {
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    padding: 10px 14px;
+}
+
+.form-control:focus {
+    border-color: #2563eb;
+    box-shadow:
+        0 0 0 .2rem rgba(37,99,235,.15);
+}
+
+
+/* ==============================
+   TABLE
+   ============================== */
+
+.table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background: #1e40af;
+    color: white;
+    border: none;
+    padding: 14px;
+}
+
+.table tbody tr {
+    transition: .2s;
+}
+
+.table tbody tr:hover {
+    background: #eff6ff;
+}
+
+
+/* ==============================
+   BADGE
+   ============================== */
+
+.badge {
+    padding: 7px 12px;
+    border-radius: 20px;
+}
+
+
+/* ==============================
+   IMAGE PREVIEW
+   ============================== */
+
+.preview-image {
+    width: 300px;
+    max-width: 100%;
+    border-radius: 15px;
+    margin-top: 15px;
+    box-shadow:
+        0 5px 15px rgba(0,0,0,.15);
+}
+
+
+/* ==============================
+   FOOTER
+   ============================== */
+
+footer {
+    font-size: 14px;
+    opacity: .9;
+}
+
+
+/* ==============================
+   SCROLLBAR
+   ============================== */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2563eb;
+    border-radius: 10px;
+}
+/* ==========================
+   ADMIN SIDEBAR
+   ========================== */
+
+.admin-sidebar {
+    background: linear-gradient(
+        180deg,
+        #111827,
+        #1f2937
+    );
+}
+
+
+.sidebar-title {
+    color: white;
+    font-weight: 700;
+}
+
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #d1d5db;
+    text-decoration: none;
+
+    padding: 12px 15px;
+    border-radius: 10px;
+
+    transition: .3s;
+}
+
+
+.sidebar-link:hover {
+    background: #2563eb;
+    color: white;
+}
+
+
+.sidebar-sub-link {
+    display: block;
+
+    color: #cbd5e1;
+    text-decoration: none;
+
+    padding: 8px 12px;
+    border-radius: 8px;
+
+    transition: .3s;
+}
+
+
+.sidebar-sub-link:hover {
+    background: rgba(37,99,235,.3);
+    color:white;
+}
+
+
+.admin-sidebar i {
+    font-size: 18px;
+}
