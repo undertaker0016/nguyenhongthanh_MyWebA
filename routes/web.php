@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Client\HomeController as ClientHomeController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Client\CartController as ClientCartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -11,9 +14,20 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\DashboardController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Client Routes
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/product/{slug}', [ClientProductController::class, 'show'])
+    ->name('product.show');
+Route::get('/category/{slug}', [ClientProductController::class, 'category'])
+->name('products.category');
+Route::get('/brand/{slug}', [ClientProductController::class, 'brand'])
+->name('products.brand');
+Route::get('/search', [ClientProductController::class, 'search'])
+->name('products.search');
+Route::get('/cart', [ClientCartController::class, 'index'])
+    ->name('cart.index');
+Route::get('/checkout', [ClientCartController::class, 'checkout'])
+    ->name('cart.checkout');
 
 Route::get('/home', [HomeController::class, 'index']);
 Route::get('/test', function () {
@@ -108,7 +122,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         }
     );
     // User
-    Route::resource('products',ProductController::class)
+    Route::resource('products', ProductController::class)
         ->only(['index'])
         ->middleware('roles:1,2');
 

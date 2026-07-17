@@ -1,6 +1,8 @@
 
 /* Import Bootstrap từ node_modules */
 @import 'bootstrap/dist/css/bootstrap.min.css';
+@import "bootstrap-icons/font/bootstrap-icons.css";
 /* Import file CSS tự viết */
 /* . : thư mục hiện tại (resources/css) */
 @import './style-ad.css';
+@import './client.css';

@@ -1,0 +1,499 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import "bootstrap-icons/font/bootstrap-icons.css";
+/* =====================================
+   MINI SHOP CLIENT MODERN UI
+   ===================================== */
+
+
+/* RESET */
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    font-family:
+        "Inter",
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    background:
+        #f8fafc;
+
+    color:#334155;
+
+}
+
+
+
+/* =====================================
+   NAVBAR
+   ===================================== */
+
+
+.navbar {
+
+    background:white !important;
+
+    padding:15px 0;
+
+    box-shadow:
+        0 4px 20px rgba(0,0,0,.08);
+
+}
+
+
+
+.navbar-brand {
+
+    font-size:26px;
+
+    font-weight:800;
+
+    color:#2563eb !important;
+
+    letter-spacing:.5px;
+
+}
+
+
+
+.nav-link {
+
+    font-weight:600;
+
+    color:#475569 !important;
+
+    margin:0 5px;
+
+    transition:.3s;
+
+}
+
+
+.nav-link:hover {
+
+    color:#2563eb !important;
+
+}
+
+
+
+.dropdown-menu {
+
+    border:none;
+
+    padding:10px;
+
+    border-radius:15px;
+
+    box-shadow:
+    0 15px 35px rgba(0,0,0,.15);
+
+}
+
+
+
+.dropdown-item {
+
+    border-radius:10px;
+
+    padding:10px 15px;
+
+    font-weight:500;
+
+}
+
+
+
+.dropdown-item:hover {
+
+    background:#eff6ff;
+
+    color:#2563eb;
+
+}
+
+
+
+/* =====================================
+   SEARCH
+   ===================================== */
+
+
+form .form-control {
+
+    border-radius:30px;
+
+    padding:12px 20px;
+
+    border:1px solid #e2e8f0;
+
+}
+
+
+
+form .btn {
+
+    border-radius:30px;
+
+    padding:10px 25px;
+
+}
+
+
+
+
+/* =====================================
+   PRODUCT CARD
+   ===================================== */
+
+
+.card {
+
+    border:none;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    background:white;
+
+    transition:.35s;
+
+    height:100%;
+
+    box-shadow:
+
+    0 5px 20px rgba(0,0,0,.06);
+
+}
+
+
+
+.card:hover {
+
+    transform:
+
+    translateY(-8px);
+
+    box-shadow:
+
+    0 20px 40px rgba(0,0,0,.12);
+
+}
+
+
+
+.card-img-top {
+
+    height:220px !important;
+
+    object-fit:cover;
+
+    background:#f1f5f9;
+
+}
+
+
+
+.card-body {
+
+    padding:20px;
+
+}
+
+
+
+.card-title {
+
+    font-size:16px;
+
+    font-weight:700;
+
+    color:#1e293b;
+
+    min-height:45px;
+
+}
+
+
+
+/* Giá */
+
+.text-danger {
+
+    color:#ef4444 !important;
+
+}
+
+
+
+.card h5 {
+
+    font-size:20px;
+
+}
+
+
+
+/* =====================================
+   BUTTON
+   ===================================== */
+
+
+.btn {
+
+    font-weight:700;
+
+    border-radius:12px;
+
+    transition:.3s;
+
+}
+
+
+
+.btn-primary {
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #3b82f6
+    );
+
+    border:none;
+
+}
+
+
+
+.btn-primary:hover {
+
+    transform:translateY(-2px);
+
+    box-shadow:
+
+    0 10px 20px rgba(37,99,235,.3);
+
+}
+
+
+
+.btn-success {
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #16a34a,
+        #22c55e
+    );
+
+    border:none;
+
+}
+
+
+
+.btn-success:hover {
+
+    transform:translateY(-2px);
+
+}
+
+
+
+/* =====================================
+   TITLE SECTION
+   ===================================== */
+
+
+h1,h2,h3 {
+
+    font-weight:800;
+
+    color:#0f172a;
+
+}
+
+
+
+h3 {
+
+    position:relative;
+
+    padding-bottom:10px;
+
+}
+
+
+
+h3::after {
+
+    content:"";
+
+    position:absolute;
+
+    width:60px;
+
+    height:4px;
+
+    background:#2563eb;
+
+    bottom:0;
+
+    left:0;
+
+    border-radius:10px;
+
+}
+
+
+
+/* =====================================
+   PRODUCT DETAIL
+   ===================================== */
+
+
+.product-detail img {
+
+    border-radius:20px;
+
+}
+
+
+
+.border {
+
+    border-radius:20px !important;
+
+}
+
+
+
+/* =====================================
+   PAGINATION
+   ===================================== */
+
+
+.pagination {
+
+    gap:5px;
+
+}
+
+
+.page-link {
+
+    border:none;
+
+    border-radius:10px !important;
+
+    color:#2563eb;
+
+}
+
+
+
+.page-item.active .page-link {
+
+    background:#2563eb;
+
+    color:white;
+
+}
+
+
+
+/* =====================================
+   FOOTER
+   ===================================== */
+
+
+footer {
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #0f172a,
+        #1e293b
+    ) !important;
+
+    color:white;
+
+}
+
+
+
+footer h5 {
+
+    font-weight:800;
+
+    color:white;
+
+}
+
+
+
+footer p,
+footer a {
+
+    color:#cbd5e1 !important;
+
+}
+
+
+
+footer a:hover {
+
+    color:white !important;
+
+}
+
+
+
+/* =====================================
+   ALERT
+   ===================================== */
+
+
+.alert {
+
+    border:none;
+
+    border-radius:15px;
+
+}
+
+
+
+/* =====================================
+   MOBILE
+   ===================================== */
+
+
+@media(max-width:768px){
+
+
+    .card-img-top {
+
+        height:180px !important;
+
+    }
+
+
+    .navbar-brand {
+
+        font-size:22px;
+
+    }
+
+
+}
