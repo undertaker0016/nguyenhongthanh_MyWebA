@@ -95,8 +95,16 @@
             </form>
 
             {{-- Giỏ hàng --}}
-            <a href="{{ route('cart.index') }}" class="btn btn-outline-success">
-                Giỏ hàng (0)
+            <a href="{{ route('cart.show') }}" class="btn btn-outline-success">
+
+                Giỏ hàng
+
+                (
+                <span class="badge bg-warning text-dark" id="cart-count">
+                    {{ collect(session('cart', []))->sum('quantity') }}
+                </span>
+                )
+
             </a>
 
         </div>

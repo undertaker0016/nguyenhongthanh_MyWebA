@@ -39,6 +39,7 @@
 
             <div class="row g-2">
 
+
                 <div class="col-6">
 
                     <a href="{{ route('product.show', ['slug' => $product->slug]) }}" class="btn btn-primary w-100">
@@ -49,15 +50,24 @@
 
                 </div>
 
+
+
                 <div class="col-6">
 
-                    <button class="btn btn-success w-100">
+                    <form action="{{ route('cart.add', $product->id) }}" method="POST" class="form-add-cart">
 
-                        <i class="bi bi-cart-plus"></i>
+                        @csrf
 
-                    </button>
+                        <button type="submit" class="btn btn-success w-100">
+
+                            <i class="bi bi-cart-plus"></i>
+
+                        </button>
+
+                    </form>
 
                 </div>
+
 
             </div>
 

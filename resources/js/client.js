@@ -1,3 +1,8 @@
+import './bootstrap';
+
+import 'bootstrap';
+
+import './cart';
 /*
 =====================================
  MINI SHOP CLIENT JAVASCRIPT

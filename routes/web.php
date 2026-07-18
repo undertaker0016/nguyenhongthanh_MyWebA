@@ -14,6 +14,27 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\DashboardController;
 
+Route::prefix('cart')
+    ->controller(ClientCartController::class)
+    ->name('cart.')
+    ->group(function () {
+
+        // Hiển thị giỏ hàng
+        Route::get('/show', 'show')
+            ->name('show');
+
+        // Thêm sản phẩm vào giỏ hàng
+        Route::post('/add/{id}', 'addToCart')
+            ->name('add');
+
+        // Xóa sản phẩm khỏi giỏ
+        Route::delete('/remove/{id}', 'removeCart')
+            ->name('remove');
+
+        // Đặt hàng
+        Route::post('/checkout', 'checkout')
+            ->name('checkout');
+    });
 // Client Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/product/{slug}', [ClientProductController::class, 'show'])

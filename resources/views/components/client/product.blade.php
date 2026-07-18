@@ -39,11 +39,17 @@
 
                 <div class="col-6">
 
-                    <button class="btn btn-success w-100">
+                    <form action="{{ route('cart.add', $product->id) }}" method="POST" class="form-add-cart">
 
-                        <i class="bi bi-cart-plus"></i>
+                        @csrf
 
-                    </button>
+                        <button type="submit" class="btn btn-success w-100">
+
+                            <i class="bi bi-cart-plus"></i>
+
+                        </button>
+
+                    </form>
 
                 </div>
 
